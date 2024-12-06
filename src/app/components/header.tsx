@@ -2,18 +2,18 @@
 
 import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { ThemeToggle } from './theme-toggle'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { useState } from 'react'
+// import { ThemeToggle } from './theme-toggle'
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select"
+// import { useState } from 'react'
 
 export default function Header() {
-  const [category, setCategory] = useState('all')
+  // const [category, setCategory] = useState('all')
 
   return (
     <header className="bg-background shadow-sm">

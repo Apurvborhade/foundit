@@ -1,7 +1,7 @@
 import { AppError } from "@/app/utils/CustomError";
 import { NextResponse } from "next/server";
 
-export function errorHandler(error: any) {
+export function errorHandler(error: Error) {
     let statusCode = 500;
     let message = "Something went wrong"
 

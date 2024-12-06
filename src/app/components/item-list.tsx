@@ -10,8 +10,6 @@ import { useFetchItemsQuery } from '../services/itemApi'
 import { useDispatch, useSelector } from 'react-redux'
 import { getItems } from '../features/itemSlice'
 import { useEffect } from 'react'
-import { Inconsolata } from 'next/font/google'
-import { Icons } from '@/components/ui/Icons'
 import LoadingSkeleton from './LoadingSkeleton'
 import { RootState } from '@/app/store'
 

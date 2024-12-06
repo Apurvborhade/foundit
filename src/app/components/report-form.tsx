@@ -19,7 +19,7 @@ import { useCreateItemMutation } from '../services/itemApi'
 import { Icons } from '@/components/ui/Icons'
 
 import { useToast } from '@/hooks/use-toast'
-import { AppError } from '../utils/CustomError'
+
 
 interface ReportFormProps {
   type: 'LOST' | 'FOUND'
