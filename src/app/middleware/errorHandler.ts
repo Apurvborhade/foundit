@@ -1,4 +1,4 @@
-import { AppError } from "@/utils/CustomError";
+import { AppError } from "@/app/utils/CustomError";
 import { NextResponse } from "next/server";
 
 export function errorHandler(error: any) {

@@ -6,8 +6,14 @@ import { AppError } from '@/app/utils/CustomError';
 
 export async function POST(request: Request) {
     try {
-        const { name, description, location, contactInfo, status } = await request.json();
+        const body = await request.json();
+        console.log('Raw Body:', body); // Debugging
 
+        // Validate payload structure
+        if (!body || typeof body !== 'object') {
+            throw new AppError('Invalid JSON payload', 400);
+        }
+        const { name, description, location,date, contactInfo,category, status } = body
         // Basic validation
         if (!name || !description || !contactInfo) {
             throw new AppError('Missing required fields', 400);
@@ -18,7 +24,9 @@ export async function POST(request: Request) {
                 name,
                 description,
                 location,
+                date,
                 contactInfo,
+                category,
                 status,
             },
         });

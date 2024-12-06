@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+
 import {
   Select,
   SelectContent,
@@ -14,53 +15,96 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { motion } from 'framer-motion'
+import { useCreateItemMutation } from '../services/itemApi'
+import { Icons } from '@/components/ui/Icons'
+
+import { useToast } from '@/hooks/use-toast'
+import { AppError } from '../utils/CustomError'
 
 interface ReportFormProps {
-  type: 'lost' | 'found'
+  type: 'LOST' | 'FOUND'
 }
 
 export default function ReportForm({ type }: ReportFormProps) {
   const router = useRouter()
+  const { toast } = useToast()
   const [formData, setFormData] = useState({
-    title: '',
+    name: '',
     description: '',
     location: '',
-    date: '',
-    contact: '',
+    contactInfo: '',
+    status: type.toUpperCase(),
     category: '',
+    date: '',
   })
 
+  const [createItem, { isLoading, error }] = useCreateItemMutation();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
+
     setFormData(prevData => ({ ...prevData, [name]: value }))
+
   }
 
   const handleSelectChange = (value: string) => {
     setFormData(prevData => ({ ...prevData, category: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    try {
+      const item = await createItem(formData).unwrap();
+
+      // Redirect to home page after submission
+      if (item) {
+        setFormData({
+          name: '',
+          description: '',
+          location: '',
+          contactInfo: '',
+          category: '',
+          status: type.toUpperCase(),
+          date: '',
+        });
+        toast({
+          title: "Item created successfully",
+          className: "bg-white text-black",
+          duration: 2000
+        })
+      }
+      router.push('/')
+    } catch (error) {
+      if ('data' in error && error.data) {
+        const errorData = error.data as { message: string };
+        toast({
+          title: errorData.message,
+          variant: "destructive"
+        })
+      } else {
+        toast({
+          title: "Something Went Wrong",
+          variant: "destructive"
+        })
+      }
+
+    }
     // Here you would typically send the data to your backend
-    console.log('Form submitted:', formData)
-    // Redirect to home page after submission
-    router.push('/')
   }
 
   return (
-    <motion.form 
-      onSubmit={handleSubmit} 
+    <motion.form
+      onSubmit={handleSubmit}
       className="space-y-4"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
       <div>
-        <Label htmlFor="title">Item Title</Label>
+        <Label htmlFor="name">Item name</Label>
         <Input
-          id="title"
-          name="title"
-          value={formData.title}
+          id="name"
+          name="name"
+          value={formData.name}
           onChange={handleChange}
           required
         />
@@ -97,11 +141,11 @@ export default function ReportForm({ type }: ReportFormProps) {
         />
       </div>
       <div>
-        <Label htmlFor="contact">Contact Information</Label>
+        <Label htmlFor="contactInfo">Contact Information</Label>
         <Input
-          id="contact"
-          name="contact"
-          value={formData.contact}
+          id="contactInfo"
+          name="contactInfo"
+          value={formData.contactInfo}
           onChange={handleChange}
           required
         />
@@ -122,7 +166,11 @@ export default function ReportForm({ type }: ReportFormProps) {
         </Select>
       </div>
       <Button type="submit" className="w-full">
-        Submit {type === 'lost' ? 'Lost' : 'Found'} Item Report
+        {isLoading ? (
+          <Icons.spinner />
+        ) : (
+          `Submit ${type === 'LOST' ? 'Lost' : 'Found'} Item Report`
+        )}
       </Button>
     </motion.form>
   )

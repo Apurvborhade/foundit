@@ -17,6 +17,7 @@ model Item {
   date        DateTime?
   contactInfo String
   status      Status   @default(LOST)
+  category    String   @default("accessories") 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
