@@ -1,14 +1,17 @@
 // app/api/items/[id]/route.ts
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { errorHandler } from '@/app/middleware/errorHandler'; 
+import { errorHandler } from '@/app/middleware/errorHandler';
 import { AppError } from '@/app/utils/CustomError';
 
-export async function GET({ params }: { params: { id: string } }) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{slug:string}>}
+) {
   try {
-    const itemId = parseInt(params.id);
+    const itemId = (await params).slug;
 
-    if (isNaN(itemId)) {
+    if (itemId) {
       throw new AppError('Invalid item ID', 400);
     }
 
@@ -22,6 +25,11 @@ export async function GET({ params }: { params: { id: string } }) {
 
     return NextResponse.json(item, { status: 200 });
   } catch (error) {
-    return errorHandler(error); // Use the custom error handler
+    if (error instanceof Error) {
+      return errorHandler(error); // Safe to pass as Error
+    } else {
+      // Handle unknown error case (optional)
+      return errorHandler(new Error('Unknown error occurred'));
+    }
   }
 }

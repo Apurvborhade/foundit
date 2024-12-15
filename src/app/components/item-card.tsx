@@ -1,4 +1,7 @@
-import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Calendar, MapPin } from 'lucide-react'
+import Image from 'next/image'
 
 interface Item {
   id: number
@@ -12,7 +15,7 @@ interface Item {
 export default function ItemCard({ item }: { item: Item }) {
   return (
     <Card>
-      {/* <CardHeader>
+      <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle>{item.title}</CardTitle>
           <Badge variant={item.type === 'lost' ? 'destructive' : 'default'}>
@@ -23,7 +26,7 @@ export default function ItemCard({ item }: { item: Item }) {
       <CardContent>
         <div className="aspect-square relative mb-4">
           <Image
-            src={Placeholder}
+            src={'/placeholder.jpg'}
             alt={item.title}
             fill
             className="object-cover rounded-md"
@@ -37,7 +40,7 @@ export default function ItemCard({ item }: { item: Item }) {
           <Calendar size={16} className="mr-1" />
           {item.date}
         </div>
-      </CardContent> */}
+      </CardContent>
     </Card>
   )
 }

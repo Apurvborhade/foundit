@@ -13,7 +13,7 @@ export async function middleware(request: Request) {
     try {
         await rateLimiter.consume(ip); // Consume 1 point for the request
         return NextResponse.next(); // Allow the request
-    } catch (rateLimiterRes) {
+    } catch (_rateLimiterRes) {
         // Respond with 429 if rate limit is exceeded
         return NextResponse.json(
             {

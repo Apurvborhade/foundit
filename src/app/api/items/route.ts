@@ -13,7 +13,7 @@ export async function POST(request: Request) {
         if (!body || typeof body !== 'object') {
             throw new AppError('Invalid JSON payload', 400);
         }
-        const { name, description, location,date, contactInfo,category, status } = body
+        const { name, description, location, date, contactInfo, category, status } = body
         // Basic validation
         if (!name || !description || !contactInfo) {
             throw new AppError('Missing required fields', 400);
@@ -33,13 +33,33 @@ export async function POST(request: Request) {
 
         return NextResponse.json(newItem, { status: 201 });
     } catch (error) {
-        return errorHandler(error); // Use the custom error handler
+        if (error instanceof Error) {
+            return errorHandler(error); // Safe to pass as Error
+        } else {
+            // Handle unknown error case (optional)
+            return errorHandler(new Error('Unknown error occurred'));
+        }
     }
 }
 
 export async function GET() {
     try {
-        const items = await prisma.item.findMany();
+        const items = await prisma.item.findMany(
+            {
+                select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    location: true,
+                    date: true,
+                    contactInfo: true,
+                    status: true,
+                    category: true,
+                    createdAt: true, // Include createdAt
+                    updatedAt: true, // Include updatedAt
+                },
+            }
+        );
 
         if (items.length === 0) {
             throw new AppError('No items found', 404);
@@ -47,6 +67,12 @@ export async function GET() {
 
         return NextResponse.json(items, { status: 200 });
     } catch (error) {
-        return errorHandler(error); // Use the custom error handler
+
+        if (error instanceof Error) {
+            return errorHandler(error); // Safe to pass as Error
+        } else {
+            // Handle unknown error case (optional)
+            return errorHandler(new Error('Unknown error occurred'));
+        }
     }
 }

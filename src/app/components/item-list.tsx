@@ -13,16 +13,18 @@ import { useEffect } from 'react'
 import LoadingSkeleton from './LoadingSkeleton'
 import { RootState } from '@/app/store'
 
-interface Item {
-  id: number
-  status: 'LOST' | 'FOUND'
-  name: string
-  description: string
-  location: string
-  date: string
-  category: string
-  image: string
-}
+type Item = {
+  id: string; // id is a string in the schema
+  name: string;
+  description: string;
+  location: string | null;
+  date: string | null;
+  contactInfo: string;
+  status: 'LOST' | 'FOUND' | 'RESOLVED';
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 
 
@@ -32,9 +34,14 @@ export default function ItemList() {
   const { data, error, isLoading } = useFetchItemsQuery();
 
   useEffect(() => {
-    dispatch(getItems(data));
+    if (!data) {
+
+      dispatch(getItems([]));
+    } else {
+      dispatch(getItems(data));
+    }
   }, [data])
-  const items = useSelector ((state: RootState) => state.items);
+  const items = useSelector((state: RootState) => state.items.items);
   if (error) {
     if ('data' in error) {
       return <div>{error.data.message}</div>;
@@ -55,7 +62,7 @@ export default function ItemList() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {items.map((item:Item, index:number) => (
+      {items.map((item: Item, index: number) => (
         <motion.div
           key={item.id}
           initial={{ opacity: 0, y: 20 }}
@@ -88,7 +95,7 @@ export default function ItemList() {
                   </div>
                   <div className="flex items-center text-muted-foreground">
                     <Calendar size={16} className="mr-2" />
-                    {new Date(item.date).toDateString()}
+                    {new Date(item.createdAt).toDateString()}
                   </div>
                   <div className="flex items-center text-muted-foreground">
                     <Tag size={16} className="mr-2" />

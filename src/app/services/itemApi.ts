@@ -11,15 +11,20 @@ interface ErrorStruct {
 
 // Define Item type
 interface Item {
-    id: string;
+    id: string; // id is a string in the schema
     name: string;
     description: string;
-    location?: string;
+    location: string | null;
+    date: string | null;
     contactInfo: string;
-    status: string;
-    category:string,
-    date?: string;
-}
+    status: 'LOST' | 'FOUND' | 'RESOLVED';
+    category: string;
+    createdAt: string;
+    updatedAt: string;
+};
+
+
+
 
 // Define CreateItemPayload type
 interface CreateItemPayload {
@@ -28,7 +33,7 @@ interface CreateItemPayload {
     location?: string;
     contactInfo: string;
     status: string;
-    category:string,
+    category: string,
     date?: string;
 }
 
@@ -41,7 +46,7 @@ interface CreateItemResponse {
 // Define API
 export const itemApi = createApi({
     reducerPath: 'itemApi',
-    baseQuery: fetchBaseQuery({ baseUrl: "/api" }) as BaseQueryFn<string | FetchArgs, unknown, ErrorStruct, {}>,
+    baseQuery: fetchBaseQuery({ baseUrl: "/api" }) as BaseQueryFn<string | FetchArgs, unknown, ErrorStruct, object>,
     tagTypes: ["Item"],
     endpoints: (builder) => ({
         fetchItems: builder.query<Array<Item>, void>({
@@ -62,7 +67,7 @@ export const itemApi = createApi({
                         description: item.description,
                         location: item.location,
                         date,
-                        category:item.category,
+                        category: item.category,
                         contactInfo: item.contactInfo,
                         status: item.status
                     },

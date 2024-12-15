@@ -74,15 +74,22 @@ export default function ReportForm({ type }: ReportFormProps) {
       }
       router.push('/')
     } catch (error) {
-      if ('data' in error && error.data) {
-        const errorData = error.data as { message: string };
-        toast({
-          title: errorData.message,
-          variant: "destructive"
-        })
+      if(error instanceof Error) {
+        if ('data' in error && error.data) {
+          const errorData = error.data as { message: string };
+          toast({
+            title: errorData.message,
+            variant: "destructive"
+          })
+        } else {
+          toast({
+            title: "Something Went Wrong",
+            variant: "destructive"
+          })
+        }
       } else {
         toast({
-          title: "Something Went Wrong",
+          title: "Unknown Error Occured",
           variant: "destructive"
         })
       }
@@ -91,6 +98,11 @@ export default function ReportForm({ type }: ReportFormProps) {
     // Here you would typically send the data to your backend
   }
 
+  if(error) {
+    if('data' in error) {
+      return (<>{error.data.message}</>)
+    }
+  }
   return (
     <motion.form
       onSubmit={handleSubmit}
